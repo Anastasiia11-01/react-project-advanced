@@ -1,5 +1,15 @@
 import React, { useState } from "react";
-import { Heading, Center, Flex } from "@chakra-ui/react";
+import {
+  Heading,
+  Center,
+  Flex,
+  Box,
+  Text,
+  Select,
+  VStack,
+  Stack,
+  Button,
+} from "@chakra-ui/react";
 import { useLoaderData } from "react-router-dom";
 import { EventCard } from "../components/EventCard";
 import { TextInput } from "../ui/TextInput";
@@ -26,12 +36,27 @@ export const EventsPage = ({ clickFn }) => {
 
   const handleChange = (e) => setSearchField(e.target.value);
 
+  const [selectedCategory, setSelectedCategory] = useState("all");
+
+  const filteredOnCategories = events.filter((event) => {
+    return (
+      selectedCategory === "all" || event.categoryIds.includes(selectedCategory)
+    );
+  });
+
+  const handleCategoryChange = (e) => {
+    setSelectedCategory(e.target.value);
+  };
+
   return (
     <div
       style={{
         backgroundColor: "#CAF0F8",
         minHeight: "100vh",
         padding: "20px",
+
+        maxWidth: "1400px", // Set maximum width for responsiveness
+        margin: "0 auto", // Center content horizontally
       }}
     >
       <Center>
@@ -49,7 +74,31 @@ export const EventsPage = ({ clickFn }) => {
         />
       </Center>
       <Center>
-        <Flex gap={3} w="100%" maxW="1200px" flexWrap="wrap" justify="center">
+        <Select
+          value={selectedCategory}
+          onChange={handleCategoryChange}
+          placeholder="Select a category"
+          maxWidth="200px"
+          pb={4}
+        >
+          <option value="all">Filter by Category:</option>
+          {categories.map((category) => (
+            <option key={category.id} value={category.id}>
+              {category.name}
+            </option>
+          ))}
+        </Select>
+      </Center>
+
+      <Center>
+        <VStack spacing={4} align="stretch">
+          {filteredOnCategories.map((event) => (
+            <EventCard key={event.id} event={event} clickFn={clickFn} />
+          ))}
+        </VStack>
+      </Center>
+      <Center>
+        <Flex gap={3} w="100%" flexWrap="wrap" justify="center">
           {matchedEvents.map((event) => (
             <EventCard
               key={event.id}

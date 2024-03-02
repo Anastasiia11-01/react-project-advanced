@@ -66,7 +66,7 @@ export const EventPage = () => {
   };
 
   return (
-    <Center bg="#00B4D8" flexDirection="column" h="100vh">
+    <Center bg="#00B4D8" maxW="1400px" flexDirection="column" h="100vh">
       <Center>
         <Heading pb="4" color="#03045E" textTransform="uppercase">
           {event.title}
@@ -76,7 +76,7 @@ export const EventPage = () => {
       <Card
         borderRadius="xl"
         w={{ base: "90%", md: "3xl" }}
-        maxW="1200px"
+        maxW="1400px"
         h="auto"
         mt="8"
       >
