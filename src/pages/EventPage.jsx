@@ -66,7 +66,7 @@ export const EventPage = () => {
   };
 
   return (
-    <Center bg="#00B4D8" flexDirection="column" h="100vh">
+    <Center bg="#00B4D8" maxW="1200px" flexDirection="column" h="100vh">
       <Center>
         <Heading pb="4" color="#03045E" textTransform="uppercase">
           {event.title}
