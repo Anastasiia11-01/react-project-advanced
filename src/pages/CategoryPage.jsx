@@ -27,7 +27,7 @@ export const CategoryPage = () => {
   const { events, category } = useLoaderData();
 
   return (
-    <Center h="100vh" bg="#CAF0F8" color="#03045E" p="4" borderRadius="md">
+    <Center h="100vh" maxW="1400px" bg="#CAF0F8" color="#03045E" p="4" borderRadius="md">
       <Box textAlign="center">
         <Heading textTransform="uppercase" pb="35">
           {category.name}
