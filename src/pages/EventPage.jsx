@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { Link, useParams } from "react-router-dom";
 import {
   Center,
   Image,
@@ -11,30 +12,33 @@ import {
   Grid,
   GridItem,
   Box,
+  Spinner,
 } from "@chakra-ui/react";
 
-import { useLoaderData, Link } from "react-router-dom";
 import { EventForm } from "../components/EventForm";
 import { DeleteEvent } from "../components/DeleteEvent";
 import { EditEvent } from "../components/EditEvent";
 
-export const loader = async ({ params }) => {
-  const users = await fetch("http://localhost:3000/users");
-  const events = await fetch(`http://localhost:3000/events`);
-  const event = await fetch(`http://localhost:3000/events/${params.id}`);
-  const categories = await fetch("http://localhost:3000/categories");
-
-  return {
-    users: await users.json(),
-    event: await event.json(),
-    events: await events.json(),
-    categories: await categories.json(),
-  };
-};
+import { useEventData, useEvent } from "../useEventData";
 
 export const EventPage = () => {
-  const { event, events, users, categories } = useLoaderData();
-  const [initialEvents, setEvents] = useState(events);
+  const { eventId } = useParams(); // Extract eventId from URL params
+  const { events, users, categories, isLoading } = useEventData();
+  const [initialEvents, setEvents] = useState([]);
+  const event = useEvent(eventId);
+
+  useEffect(() => {
+    setEvents(event); // Update initialEvents with the fetched event
+  }, [event]);
+
+  // Check if the page is still loading
+  if (isLoading) {
+    return (
+      <Center>
+        <Spinner size="xl" color="blue.500" />
+      </Center>
+    );
+  }
 
   const handleDeleteEvent = (id) => {
     // Filter out the event to be deleted
@@ -55,15 +59,24 @@ export const EventPage = () => {
     })
       .then((response) => {
         if (response.ok) {
-          setMessage("Event created successfully!");
+          setMessage("New event created successfully!");
         } else {
           throw new Error("Failed to create event");
         }
       })
+
       .catch((error) => {
         setMessage("Error creating event: " + error.message);
       });
   };
+
+  if (!users.length || !events.length || !categories.length) {
+    return (
+      <Center>
+        <Spinner size="xl" color="blue.500" />
+      </Center>
+    );
+  }
 
   return (
     <Center bg="#00B4D8" maxW="1400px" flexDirection="column" h="100vh">

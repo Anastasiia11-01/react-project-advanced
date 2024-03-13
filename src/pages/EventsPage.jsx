@@ -3,31 +3,18 @@ import {
   Heading,
   Center,
   Flex,
-  Box,
-  Text,
   Select,
   VStack,
-  Stack,
-  Button,
+  Spinner,
 } from "@chakra-ui/react";
-import { useLoaderData } from "react-router-dom";
+
 import { EventCard } from "../components/EventCard";
 import { TextInput } from "../ui/TextInput";
 
-export const loader = async () => {
-  const users = await fetch("http://localhost:3000/users");
-  const events = await fetch("http://localhost:3000/events");
-  const categories = await fetch("http://localhost:3000/categories");
-
-  return {
-    users: await users.json(),
-    events: await events.json(),
-    categories: await categories.json(),
-  };
-};
+import { useEventData } from "../useEventData";
 
 export const EventsPage = ({ clickFn }) => {
-  const { users, events, categories } = useLoaderData();
+  const { users, events, categories } = useEventData();
   const [searchField, setSearchField] = useState("");
 
   const matchedEvents = events.filter((event) => {
@@ -38,15 +25,32 @@ export const EventsPage = ({ clickFn }) => {
 
   const [selectedCategory, setSelectedCategory] = useState("all");
 
+  // Filter events based on selected category
   const filteredOnCategories = events.filter((event) => {
-    return (
-      selectedCategory === "all" || event.categoryIds.includes(selectedCategory)
-    );
+    if (selectedCategory === "all") {
+      return true; // Include all events when "all" is selected
+    } else {
+      // Check if event.categoryIds exists and is an array before calling .includes()
+      return (
+        event.categoryIds &&
+        Array.isArray(event.categoryIds) &&
+        event.categoryIds.includes(parseInt(selectedCategory))
+      );
+    }
   });
 
   const handleCategoryChange = (e) => {
     setSelectedCategory(e.target.value);
   };
+
+  // Check if data is still being fetched
+  if (!users.length || !events.length || !categories.length) {
+    return (
+      <Center>
+        <Spinner size="xl" color="blue.500" />
+      </Center>
+    );
+  }
 
   return (
     <div
@@ -77,7 +81,6 @@ export const EventsPage = ({ clickFn }) => {
         <Select
           value={selectedCategory}
           onChange={handleCategoryChange}
-          placeholder="Select a category"
           maxWidth="200px"
           pb={4}
         >
@@ -106,6 +109,12 @@ export const EventsPage = ({ clickFn }) => {
               event={event}
               users={users}
               categories={categories}
+              eventId={event.id}
+              categoryId={
+                event.categoryIds && event.categoryIds.length > 0
+                  ? event.categoryIds[0]
+                  : ""
+              }
             />
           ))}
         </Flex>

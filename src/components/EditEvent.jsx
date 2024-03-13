@@ -20,9 +20,18 @@ export const EditEvent = ({ event }) => {
       [field]: value !== "" ? value : prevEvent[field],
     }));
   };
+  // Function to check if the image URL is complete
+  const isCompleteURL = (url) => {
+    return url.startsWith("http://") || url.startsWith("https://");
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (!isCompleteURL(updatedEvent.image)) {
+      setMessage("Image URL is incomplete");
+      return;
+    }
+
     fetch(`http://localhost:3000/events/${event.id}`, {
       method: "PUT",
       headers: {
@@ -32,7 +41,7 @@ export const EditEvent = ({ event }) => {
     })
       .then((response) => {
         if (response.ok) {
-          setMessage("Event updated successfully!");
+          setMessage("Update Successful!");
           alert("Event updated successfully!"); // Alert after successful update
           setUpdatedEvent({}); // Clear form fields after successful update
           setShowForm(false);
@@ -91,10 +100,10 @@ export const EditEvent = ({ event }) => {
                 <FormControl>
                   <Input
                     type="text"
-                    placeholder="Category"
-                    value={updatedEvent.categoryName}
+                    placeholder="Category Id"
+                    value={updatedEvent.categoryIds}
                     onChange={(e) =>
-                      handleInputChange("Category name", e.target.value)
+                      handleInputChange("category", e.target.value)
                     }
                   />
                 </FormControl>
@@ -108,29 +117,29 @@ export const EditEvent = ({ event }) => {
                     }
                   />
                 </FormControl>
-
                 <FormControl>
                   <Input
                     type="datetime-local"
                     placeholder="Start"
                     value={updatedEvent.startTime}
-                    min={new Date().toISOString().slice(0, 16)} // Set minimum value to current date and time
+                    min={new Date().toISOString().slice(0, 16)}
                     onChange={(e) =>
-                      handleInputChange("StartTime", e.target.value)
+                      handleInputChange("startTime", e.target.value)
                     }
                   />
                 </FormControl>
                 <FormControl mb={4}>
                   <Input
                     type="datetime-local"
-                    placeholder="TEnd"
+                    placeholder="End"
                     value={updatedEvent.endTime}
-                    min={updatedEvent.startTime} // Set minimum value to the start time
+                    min={updatedEvent.startTime}
                     onChange={(e) =>
-                      handleInputChange("End Time", e.target.value)
+                      handleInputChange("endTime", e.target.value)
                     }
                   />
                 </FormControl>
+
                 <Button type="submit" colorScheme="teal" mr={3}>
                   Save
                 </Button>

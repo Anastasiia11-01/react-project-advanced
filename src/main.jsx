@@ -1,11 +1,12 @@
 import { ChakraProvider } from "@chakra-ui/react";
 import React from "react";
 import ReactDOM from "react-dom";
-import { EventPage, loader as EventPageLoader } from "./pages/EventPage";
-import { EventsPage, loader as EventsPageLoader } from "./pages/EventsPage";
-import { CategoryPage, loader as CategoryLoader } from "./pages/CategoryPage";
+import { EventPage } from "./pages/EventPage";
+import { EventsPage } from "./pages/EventsPage";
+import { CategoryPage } from "./pages/CategoryPage";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { Root } from "./components/Root";
+import { useEventData } from "./useEventData";
 
 const router = createBrowserRouter([
   {
@@ -15,26 +16,30 @@ const router = createBrowserRouter([
       {
         path: "/",
         element: <EventsPage />,
-        loader: EventsPageLoader,
       },
       {
-        path: "/events/:id",
+        path: "/events/:eventId",
         element: <EventPage />,
-        loader: EventPageLoader,
       },
       {
         path: "/categories/:categoryId",
         element: <CategoryPage />,
-        loader: CategoryLoader,
       },
     ],
   },
 ]);
-// @ts-ignore
+const App = () => {
+  const data = useEventData();
+
+  return (
+    <ChakraProvider>
+      <RouterProvider router={router} data={data} />
+    </ChakraProvider>
+  );
+};
+
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <ChakraProvider>
-      <RouterProvider router={router} />
-    </ChakraProvider>
+    <App />
   </React.StrictMode>
 );

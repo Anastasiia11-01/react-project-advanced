@@ -9,6 +9,26 @@
       "id": 2,
       "name": "Jane Bennett",
       "image": "https://global-uploads.webflow.com/5eecfecbe625d195e35b89f2/624bfb401d7131c760ca1c63_Elieska%20Lensink.jpg"
+    },
+    {
+      "name": "Anna",
+      "id": 3
+    },
+    {
+      "name": "Jack",
+      "id": 4
+    },
+    {
+      "name": "sara",
+      "id": 5
+    },
+    {
+      "name": "Kate",
+      "id": 6
+    },
+    {
+      "name": "anne",
+      "id": 7
     }
   ],
   "events": [
@@ -69,6 +89,18 @@
     {
       "name": "relaxation",
       "id": 3
+    },
+    {
+      "name": "dance",
+      "id": 4
+    },
+    {
+      "name": "Nature",
+      "id": 5
+    },
+    {
+      "name": "dances",
+      "id": 6
     }
   ]
 }

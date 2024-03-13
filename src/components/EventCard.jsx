@@ -27,11 +27,12 @@ export const EventCard = ({ event, clickFn, users, categories }) => {
           <Stack mt="6" spacing="3">
             <Heading color="#03045E" size="md">
               <Link to={`events/${event.id}`}>
-                <h2>{event.title}</h2>
+                <h2>{event && event.title}</h2>
               </Link>
             </Heading>
             <Text color="#00B4D8">
-              by {users.find((user) => user.id === event.createdBy)?.name}
+              by{" "}
+              {users && users.find((user) => user.id === event.createdBy)?.name}
             </Text>
             <Text color="#718096" textTransform="uppercase">
               {event.description}
@@ -49,14 +50,20 @@ export const EventCard = ({ event, clickFn, users, categories }) => {
             </Text>
             <Text color="#718096" textTransform="uppercase">
               Category:{" "}
-              {event.categoryIds.map((categoryId) => (
-                <Link key={categoryId} to={`/categories/${categoryId}`}>
-                  {
-                    categories.find((category) => category.id === categoryId)
-                      ?.name
-                  }
-                </Link>
-              ))}
+              {event.categoryIds &&
+                Array.isArray(event.categoryIds) &&
+                event.categoryIds.length > 0 &&
+                categories.length > 0 &&
+                event.categoryIds.map((categoryId) => {
+                  const category = categories.find(
+                    (cat) => cat.id === categoryId
+                  );
+                  return category ? (
+                    <Link key={categoryId} to={`/categories/${categoryId}`}>
+                      {category.name}
+                    </Link>
+                  ) : null;
+                })}
             </Text>
           </Stack>
         </CardBody>

@@ -7,27 +7,31 @@ import {
   UnorderedList,
   ListItem,
 } from "@chakra-ui/react";
-import { useLoaderData, Link } from "react-router-dom";
-
-export const loader = async ({ params }) => {
-  const usersResponse = await fetch("http://localhost:3000/users");
-  const eventsResponse = await fetch("http://localhost:3000/events");
-  const categoryResponse = await fetch(
-    `http://localhost:3000/categories/${params.categoryId}`
-  );
-
-  const users = await usersResponse.json();
-  const events = await eventsResponse.json();
-  const category = await categoryResponse.json();
-
-  return { users, events, category };
-};
+import { Link, useParams } from "react-router-dom";
+import { useEventData, useCategory } from "../useEventData";
 
 export const CategoryPage = () => {
-  const { events, category } = useLoaderData();
+  const { categoryId } = useParams();
+  const { events } = useEventData();
+  const category = useCategory(categoryId);
+
+  if (!category) {
+    return (
+      <Center>
+        <Heading color="#03045E">Category not found</Heading>
+      </Center>
+    );
+  }
 
   return (
-    <Center h="100vh" bg="#CAF0F8" color="#03045E" p="4" borderRadius="md">
+    <Center
+      h="100vh"
+      maxW="1400px"
+      bg="#CAF0F8"
+      color="#03045E"
+      p="4"
+      borderRadius="md"
+    >
       <Box textAlign="center">
         <Heading textTransform="uppercase" pb="35">
           {category.name}

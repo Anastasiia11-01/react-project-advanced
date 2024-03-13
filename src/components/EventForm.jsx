@@ -21,8 +21,64 @@ export const EventForm = ({ users, categories, events, createEvent }) => {
   const [message, setMessage] = useState("");
   const [showForm, setShowForm] = useState(false);
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
+
+    // Find user by name or create a new user
+    let foundUser = users.find((user) => user.name === userName);
+    let createdBy;
+    if (!foundUser) {
+      try {
+        const response = await fetch("http://localhost:3000/users", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ name: userName }),
+        });
+        if (response.ok) {
+          const newUser = await response.json();
+          createdBy = newUser.id;
+        } else {
+          setMessage("Failed to create user.");
+          return;
+        }
+      } catch (error) {
+        setMessage("Error creating user: " + error.message);
+        return;
+      }
+    } else {
+      createdBy = foundUser.id;
+    }
+
+    // Create new category if not found
+    let foundCategory = categories.find(
+      (category) => category.name === categoryName
+    );
+    let categoryIds;
+    if (!foundCategory) {
+      try {
+        const response = await fetch("http://localhost:3000/categories", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ name: categoryName }),
+        });
+        if (response.ok) {
+          const newCategory = await response.json();
+          categoryIds = [newCategory.id];
+        } else {
+          setMessage("Failed to create category.");
+          return;
+        }
+      } catch (error) {
+        setMessage("Error creating category: " + error.message);
+        return;
+      }
+    } else {
+      categoryIds = [foundCategory.id];
+    }
 
     // Check if an event with the same details already exists for the user
     const existingEvent = events.find(
@@ -42,18 +98,6 @@ export const EventForm = ({ users, categories, events, createEvent }) => {
       return;
     }
 
-    // Find user by name or create a new user
-    const foundUser = users.find((user) => user.name === userName);
-    const createdBy = foundUser ? foundUser.id : users.length + 1; // Assign new ID if user not found
-
-    // Find categoryId by name or create a new Id
-    const foundCategory = categories.find(
-      (category) => category.name === categoryName
-    );
-    const categoryIds = foundCategory
-      ? foundCategory.id
-      : categories.length + 1; // Assign new ID if user not found
-
     // Create event object
     const eventData = {
       createdBy,
@@ -68,6 +112,7 @@ export const EventForm = ({ users, categories, events, createEvent }) => {
 
     // Call createEvent function from parent component
     createEvent(eventData);
+    setShowForm(false);
 
     // Clear form fields
     const clearFormFields = () => {
